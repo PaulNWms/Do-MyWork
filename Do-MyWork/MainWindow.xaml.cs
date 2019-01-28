@@ -32,10 +32,11 @@ namespace Do_MyWork
         {
             var appSettings = ConfigurationManager.AppSettings;
             string editor = appSettings.Get("Editor");
-            var eventHandlers = new MyEventHandlers(editor, tree);
+            var eventHandlers = new MyEventHandlers(editor, this.tree);
             TreeBuilder treeBuilder = new TreeBuilder(eventHandlers, this.tree);
+            eventHandlers.TreeBuilder = treeBuilder;
             treeBuilder.BuildTree();
-            tree.Focus();
+            this.tree.Focus();
         }
 
         private void ReloadAppSettings()

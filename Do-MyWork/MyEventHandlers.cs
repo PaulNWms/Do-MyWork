@@ -8,12 +8,11 @@ using System.Windows.Media.Media3D;
 
 namespace Do_MyWork
 {
-    internal enum TreeNodeType { Files, Dirs }
-
     class MyEventHandlers
     {
         public string Editor { get; private set; }
         public TreeView Tree { get; private set; }
+        public TreeBuilder TreeBuilder { get; set; }
 
         public MyEventHandlers(string editor, TreeView tree)
         {
@@ -37,6 +36,26 @@ namespace Do_MyWork
 
                 case "Open Folder":
                     Process.Start("explorer.exe", Path.GetDirectoryName(tag));
+                    break;
+
+                case "Open CMD":
+                    {
+                        ProcessStartInfo psi = new ProcessStartInfo();
+                        psi.FileName = "cmd.exe";
+                        psi.Arguments = "/K";
+                        psi.WorkingDirectory = Path.GetDirectoryName(tag);
+                        Process.Start(psi);
+                    }
+                    break;
+
+                case "Open PowerShell":
+                    {
+                        ProcessStartInfo psi = new ProcessStartInfo();
+                        psi.FileName = "powershell.exe";
+                        psi.Arguments = "-NoExit";
+                        psi.WorkingDirectory = Path.GetDirectoryName(tag);
+                        Process.Start(psi);
+                    }
                     break;
 
                 case "Open URL":
@@ -78,16 +97,11 @@ namespace Do_MyWork
                         break;
                 }
 
-                RemovePlaceholder(treeViewItem.Items);
-
-                foreach (string child in children)
-                {
-                    TreeViewItem item = new TreeViewItem();
-                    item.Header = child;
-                    treeViewItem.Items.Add(item);
-                }
+                treeViewItem.Items.Clear();
+                this.TreeBuilder.AddChildNodes(treeNodeType, treeViewItem.Items, children);
             }
         }
+
         private bool TryGetPathFilter(string pathFilter, out string path, out string filter)
         {
             int idx = pathFilter.LastIndexOf('\\');
@@ -103,26 +117,6 @@ namespace Do_MyWork
                 path = null;
                 filter = null;
                 return false;
-            }
-        }
-
-        private void RemovePlaceholder(ItemCollection items)
-        {
-            int idx = -1;
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                TreeViewItem item = items[i] as TreeViewItem;
-
-                if (item.Header.ToString() == ".")
-                {
-                    idx = i;
-                }
-            }
-
-            if (idx >= 0)
-            {
-                items.RemoveAt(idx);
             }
         }
 
