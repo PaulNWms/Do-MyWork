@@ -90,18 +90,17 @@ namespace Do_MyWork
                 foreach (string child in children)
                 {
                     TreeViewItem item = new TreeViewItem();
+                    item.Header = Path.GetFileName(child);
                     item.Tag = child;
 
                     switch (treeNodeType)
                     {
                         case TreeNodeType.Dirs:
-                            item.Header = child;
                             AddDirectoryMenu(item);
                             break;
 
                         case TreeNodeType.Files:
                         default:
-                            item.Header = Path.GetFileName(child);
                             AddFileMenu(item);
                             break;
                     }
