@@ -62,6 +62,7 @@ namespace Do_MyWork
                 {
                     item.Tag = xmlNode.Attributes["files"].Value;
                     item.Expanded += this.MyEventHandlers.FilesItem_Expanded;
+                    AddDirectoryMenu(item);
                     AddPlaceholder(item);
                 }
 
@@ -69,6 +70,7 @@ namespace Do_MyWork
                 {
                     item.Tag = xmlNode.Attributes["dirs"].Value;
                     item.Expanded += this.MyEventHandlers.DirsItem_Expanded;
+                    AddDirectoryMenu(item);
                     AddPlaceholder(item);
                 }
 
@@ -112,7 +114,6 @@ namespace Do_MyWork
 
         private void AddPlaceholder(TreeViewItem item)
         {
-            item.ContextMenu = new ContextMenu();
             TreeViewItem placeholder = new TreeViewItem();
             placeholder.Header = ".";
             item.Items.Add(placeholder);
