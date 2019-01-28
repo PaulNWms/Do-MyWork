@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
@@ -89,17 +90,18 @@ namespace Do_MyWork
                 foreach (string child in children)
                 {
                     TreeViewItem item = new TreeViewItem();
-                    item.Header = child;
                     item.Tag = child;
 
                     switch (treeNodeType)
                     {
                         case TreeNodeType.Dirs:
+                            item.Header = child;
                             AddDirectoryMenu(item);
                             break;
 
                         case TreeNodeType.Files:
                         default:
+                            item.Header = Path.GetFileName(child);
                             AddFileMenu(item);
                             break;
                     }
