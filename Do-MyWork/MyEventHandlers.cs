@@ -23,19 +23,19 @@ namespace Do_MyWork
 
         public void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            TreeViewItem treeItem = this.Tree.SelectedItem as TreeViewItem;
+            TreeViewItem item = this.Tree.SelectedItem as TreeViewItem;
+            TreeNode node = item.Tag as TreeNode;
             MenuItem menuItem = sender as MenuItem;
             string menuSelection = menuItem.Header.ToString();
-            string tag = treeItem.Tag.ToString();
 
             switch (menuSelection)
             {
                 case "Edit":
-                    Process.Start(this.Editor, tag);
+                    Process.Start(this.Editor, node.Path);
                     break;
 
                 case "Open Folder":
-                    Process.Start("explorer.exe", Path.GetDirectoryName(tag));
+                    Process.Start("explorer.exe", GetFolder(item));
                     break;
 
                 case "Open CMD":
@@ -43,7 +43,7 @@ namespace Do_MyWork
                         ProcessStartInfo psi = new ProcessStartInfo();
                         psi.FileName = "cmd.exe";
                         psi.Arguments = "/K";
-                        psi.WorkingDirectory = Path.GetDirectoryName(tag);
+                        psi.WorkingDirectory = GetFolder(item);
                         Process.Start(psi);
                     }
                     break;
@@ -53,15 +53,34 @@ namespace Do_MyWork
                         ProcessStartInfo psi = new ProcessStartInfo();
                         psi.FileName = "powershell.exe";
                         psi.Arguments = "-NoExit";
-                        psi.WorkingDirectory = Path.GetDirectoryName(tag);
+                        psi.WorkingDirectory = GetFolder(item);
                         Process.Start(psi);
                     }
                     break;
 
                 case "Open URL":
-                    Process.Start(tag);
+                    Process.Start(node.Path);
                     break;
             }
+        }
+
+        private string GetFolder(TreeViewItem item)
+        {
+            TreeNode node = item.Tag as TreeNode;
+
+            switch (node.Type)
+            {
+                case TreeNodeType.FileParent:
+                case TreeNodeType.DirParent:
+                case TreeNodeType.Dir:
+                case TreeNodeType.Url:
+                    return node.Path;
+
+                case TreeNodeType.File:
+                default:
+                    return Path.GetDirectoryName(node.Path);
+            }
+
         }
 
         public void FilesItem_Expanded(object sender, RoutedEventArgs e)

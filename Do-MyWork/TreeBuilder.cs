@@ -43,16 +43,13 @@ namespace Do_MyWork
 
                 if (xmlNode.Attributes["file"] != null)
                 {
-                    if (TryGetPathFilter(xmlNode.Attributes["file"].Value, out path, out filter))
-                    {
-                        item.Tag = new TreeNode(TreeNodeType.File, path, filter);
-                        AddFileMenu(item);
-                    }
+                    item.Tag = new TreeNode(TreeNodeType.File, xmlNode.Attributes["file"].Value, null);
+                    AddFileMenu(item);
                 }
 
                 if (xmlNode.Attributes["url"] != null)
                 {
-                    item.Tag = new TreeNode(TreeNodeType.Url, path, null);
+                    item.Tag = new TreeNode(TreeNodeType.Url, xmlNode.Attributes["url"].Value, null);
                     item.ContextMenu = new ContextMenu();
                     MenuItem menuItem = new MenuItem();
                     menuItem.Header = "Open URL";
@@ -66,6 +63,7 @@ namespace Do_MyWork
                     {
                         item.Tag = new TreeNode(TreeNodeType.FileParent, path, filter);
                         item.Expanded += this.MyEventHandlers.FilesItem_Expanded;
+                        AddDirectoryMenu(item);
                         AddPlaceholder(item);
                     }
                 }
@@ -76,6 +74,7 @@ namespace Do_MyWork
                     {
                         item.Tag = new TreeNode(TreeNodeType.DirParent, path, filter);
                         item.Expanded += this.MyEventHandlers.DirsItem_Expanded;
+                        AddDirectoryMenu(item);
                         AddPlaceholder(item);
                     }
                 }
@@ -99,16 +98,17 @@ namespace Do_MyWork
                 {
                     TreeViewItem item = new TreeViewItem();
                     item.Header = child;
-                    item.Tag = child;
 
                     switch (treeNodeType)
                     {
                         case TreeNodeType.DirParent:
+                            item.Tag = new TreeNode(TreeNodeType.Dir, child, null);
                             AddDirectoryMenu(item);
                             break;
 
                         case TreeNodeType.FileParent:
                         default:
+                            item.Tag = new TreeNode(TreeNodeType.File, child, null);
                             AddFileMenu(item);
                             break;
                     }
@@ -138,7 +138,6 @@ namespace Do_MyWork
 
         private void AddPlaceholder(TreeViewItem item)
         {
-            item.ContextMenu = new ContextMenu();
             TreeViewItem placeholder = new TreeViewItem();
             placeholder.Header = ".";
             item.Items.Add(placeholder);
