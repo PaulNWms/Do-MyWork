@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -60,6 +61,46 @@ namespace Do_MyWork
 
                 case "Open URL":
                     Process.Start(node.Path);
+                    break;
+
+                case "Run Executable":
+                    {
+                        ProcessStartInfo psi = new ProcessStartInfo();
+                        psi.CreateNoWindow = false;
+                        psi.UseShellExecute = false;
+                        psi.WindowStyle = ProcessWindowStyle.Hidden;
+                        psi.FileName = Path.GetFileName(node.Path);
+                        psi.WorkingDirectory = Path.GetDirectoryName(node.Path);
+
+                        try
+                        {
+                            Process.Start(psi);
+                        }
+                        catch(Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                    break;
+
+                case "Run Batch":
+                    {
+                        ProcessStartInfo psi = new ProcessStartInfo();
+                        psi.FileName = "cmd.exe";
+                        psi.Arguments = string.Format(@"/K ""{0}""", Path.GetFileName(node.Path));
+                        psi.WorkingDirectory = GetFolder(item);
+                        Process.Start(psi);
+                    }
+                    break;
+
+                case "Run Script":
+                    {
+                        ProcessStartInfo psi = new ProcessStartInfo();
+                        psi.FileName = "powershell.exe";
+                        psi.Arguments = string.Format(@"-NoExit -Command "".\{0}""", Path.GetFileName(node.Path));
+                        psi.WorkingDirectory = GetFolder(item);
+                        Process.Start(psi);
+                    }
                     break;
             }
         }

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace Do_MyWork
 {
@@ -9,6 +10,9 @@ namespace Do_MyWork
     {
         public TreeView Tree { get; private set; }
         public MyEventHandlers MyEventHandlers { get; private set; }
+        private Regex exePattern = new Regex(@"\.exe$", RegexOptions.Singleline | RegexOptions.Compiled);
+        private Regex cmdPattern = new Regex(@"\.bat$|\.cmd$", RegexOptions.Singleline | RegexOptions.Compiled);
+        private Regex ps1Pattern = new Regex(@"\.ps1$", RegexOptions.Singleline | RegexOptions.Compiled);
 
         public TreeBuilder(MyEventHandlers myEventHandlers, TreeView tree)
         {
@@ -162,6 +166,32 @@ namespace Do_MyWork
             menuItem.Header = "Open PowerShell";
             menuItem.Click += this.MyEventHandlers.MenuItem_Click;
             item.ContextMenu.Items.Add(menuItem);
+            TreeNode node = item.Tag as TreeNode;
+
+            if (exePattern.IsMatch(node.Path))
+            {
+                item.ContextMenu.Items.Add(new Separator());
+                menuItem = new MenuItem();
+                menuItem.Header = "Run Executable";
+                menuItem.Click += this.MyEventHandlers.MenuItem_Click;
+                item.ContextMenu.Items.Add(menuItem);
+            }
+            else if (cmdPattern.IsMatch(node.Path))
+            {
+                item.ContextMenu.Items.Add(new Separator());
+                menuItem = new MenuItem();
+                menuItem.Header = "Run Batch";
+                menuItem.Click += this.MyEventHandlers.MenuItem_Click;
+                item.ContextMenu.Items.Add(menuItem);
+            }
+            else if (ps1Pattern.IsMatch(node.Path))
+            {
+                item.ContextMenu.Items.Add(new Separator());
+                menuItem = new MenuItem();
+                menuItem.Header = "Run Script";
+                menuItem.Click += this.MyEventHandlers.MenuItem_Click;
+                item.ContextMenu.Items.Add(menuItem);
+            }
         }
 
         private void AddDirectoryMenu(TreeViewItem item)
