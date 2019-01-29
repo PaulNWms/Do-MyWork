@@ -66,58 +66,34 @@ namespace Do_MyWork
 
         public void FilesItem_Expanded(object sender, RoutedEventArgs e)
         {
-            FileSystemItem_Expanded(TreeNodeType.Files, sender, e);
+            FileSystemItem_Expanded(TreeNodeType.FileParent, sender, e);
         }
 
         public void DirsItem_Expanded(object sender, RoutedEventArgs e)
         {
-            FileSystemItem_Expanded(TreeNodeType.Dirs, sender, e);
+            FileSystemItem_Expanded(TreeNodeType.DirParent, sender, e);
         }
 
         public void FileSystemItem_Expanded(TreeNodeType treeNodeType, object sender, RoutedEventArgs e)
         {
-            TreeViewItem treeViewItem = sender as TreeViewItem;
-            string pathFilter = treeViewItem.Tag.ToString();
-            string path = null;
-            string filter = null;
+            TreeViewItem item = sender as TreeViewItem;
+            TreeNode node = item.Tag as TreeNode;
+            string[] children = null;
 
-            if (TryGetPathFilter(pathFilter, out path, out filter))
+            switch (treeNodeType)
             {
-                string[] children = null;
+                case TreeNodeType.DirParent:
+                    children = Directory.GetDirectories(node.Path, node.Filter);
+                    break;
 
-                switch (treeNodeType)
-                {
-                    case TreeNodeType.Dirs:
-                        children = Directory.GetDirectories(path, filter);
-                        break;
-
-                    case TreeNodeType.Files:
-                    default:
-                        children = Directory.GetFiles(path, filter);
-                        break;
-                }
-
-                treeViewItem.Items.Clear();
-                this.TreeBuilder.AddChildNodes(treeNodeType, treeViewItem.Items, children);
+                case TreeNodeType.FileParent:
+                default:
+                    children = Directory.GetFiles(node.Path, node.Filter);
+                    break;
             }
-        }
 
-        private bool TryGetPathFilter(string pathFilter, out string path, out string filter)
-        {
-            int idx = pathFilter.LastIndexOf('\\');
-
-            if (idx >= 0)
-            {
-                path = pathFilter.Substring(0, idx);
-                filter = pathFilter.Substring(idx + 1);
-                return true;
-            }
-            else
-            {
-                path = null;
-                filter = null;
-                return false;
-            }
+            item.Items.Clear();
+            this.TreeBuilder.AddChildNodes(treeNodeType, item.Items, children);
         }
 
         private void TreeView_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)

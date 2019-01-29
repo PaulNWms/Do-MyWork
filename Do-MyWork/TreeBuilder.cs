@@ -5,8 +5,6 @@ using System.Xml;
 
 namespace Do_MyWork
 {
-    public enum TreeNodeType { Files, Dirs }
-
     class TreeBuilder
     {
         public TreeView Tree { get; private set; }
@@ -40,16 +38,21 @@ namespace Do_MyWork
             {
                 TreeViewItem item = new TreeViewItem();
                 item.Header = xmlNode.Attributes["name"].Value;
+                string path = null;
+                string filter = null;
 
                 if (xmlNode.Attributes["file"] != null)
                 {
-                    item.Tag = xmlNode.Attributes["file"].Value;
-                    AddFileMenu(item);
+                    if (TryGetPathFilter(xmlNode.Attributes["file"].Value, out path, out filter))
+                    {
+                        item.Tag = new TreeNode(TreeNodeType.File, path, filter);
+                        AddFileMenu(item);
+                    }
                 }
 
                 if (xmlNode.Attributes["url"] != null)
                 {
-                    item.Tag = xmlNode.Attributes["url"].Value;
+                    item.Tag = new TreeNode(TreeNodeType.Url, path, null);
                     item.ContextMenu = new ContextMenu();
                     MenuItem menuItem = new MenuItem();
                     menuItem.Header = "Open URL";
@@ -59,16 +62,22 @@ namespace Do_MyWork
 
                 if (xmlNode.Attributes["files"] != null)
                 {
-                    item.Tag = xmlNode.Attributes["files"].Value;
-                    item.Expanded += this.MyEventHandlers.FilesItem_Expanded;
-                    AddPlaceholder(item);
+                    if (TryGetPathFilter(xmlNode.Attributes["files"].Value, out path, out filter))
+                    {
+                        item.Tag = new TreeNode(TreeNodeType.FileParent, path, filter);
+                        item.Expanded += this.MyEventHandlers.FilesItem_Expanded;
+                        AddPlaceholder(item);
+                    }
                 }
 
                 if (xmlNode.Attributes["dirs"] != null)
                 {
-                    item.Tag = xmlNode.Attributes["dirs"].Value;
-                    item.Expanded += this.MyEventHandlers.DirsItem_Expanded;
-                    AddPlaceholder(item);
+                    if (TryGetPathFilter(xmlNode.Attributes["dirs"].Value, out path, out filter))
+                    {
+                        item.Tag = new TreeNode(TreeNodeType.DirParent, path, filter);
+                        item.Expanded += this.MyEventHandlers.DirsItem_Expanded;
+                        AddPlaceholder(item);
+                    }
                 }
 
                 items.Add(item);
@@ -94,11 +103,11 @@ namespace Do_MyWork
 
                     switch (treeNodeType)
                     {
-                        case TreeNodeType.Dirs:
+                        case TreeNodeType.DirParent:
                             AddDirectoryMenu(item);
                             break;
 
-                        case TreeNodeType.Files:
+                        case TreeNodeType.FileParent:
                         default:
                             AddFileMenu(item);
                             break;
@@ -106,6 +115,24 @@ namespace Do_MyWork
 
                     items.Add(item);
                 }
+            }
+        }
+
+        private bool TryGetPathFilter(string pathFilter, out string path, out string filter)
+        {
+            int idx = pathFilter.LastIndexOf('\\');
+
+            if (idx >= 0)
+            {
+                path = pathFilter.Substring(0, idx);
+                filter = pathFilter.Substring(idx + 1);
+                return true;
+            }
+            else
+            {
+                path = null;
+                filter = null;
+                return false;
             }
         }
 

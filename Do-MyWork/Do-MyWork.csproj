@@ -61,6 +61,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="MyEventHandlers.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="TreeBuilder.cs" />
     <Compile Include="XmlSectionHandler.cs" />
     <Page Include="MainWindow.xaml">
