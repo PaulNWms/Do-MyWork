@@ -2,6 +2,8 @@
 using System.Configuration;
 using System.IO;
 using System.Windows;
+using System.Threading;
+
 namespace Do_MyWork
 {
     /// <summary>
@@ -41,9 +43,20 @@ namespace Do_MyWork
 
         private void ReloadAppSettings()
         {
-            ConfigurationManager.RefreshSection("appSettings");
-            ConfigurationManager.RefreshSection("TreeContents");
-            LoadAppSettings();
+            while (true)
+            {
+                try
+                {
+                    ConfigurationManager.RefreshSection("appSettings");
+                    ConfigurationManager.RefreshSection("TreeContents");
+                    LoadAppSettings();
+                    break;
+                }
+                catch (ConfigurationErrorsException ex)
+                {
+                    Thread.Sleep(100);
+                }
+            }
         }
     }
 }

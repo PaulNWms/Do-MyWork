@@ -63,11 +63,11 @@ namespace Do_MyWork
                     item.Tag = new TreeNode(TreeNodeType.Url, xmlNode.Attributes["url"].Value, null);
                     item.ContextMenu = new ContextMenu();
                     MenuItem menuItem = new MenuItem();
-                    menuItem.Header = "Copy To Clipboard";
+                    menuItem.Header = "Open URL";
                     menuItem.Click += this.MyEventHandlers.MenuItem_Click;
                     item.ContextMenu.Items.Add(menuItem);
                     menuItem = new MenuItem();
-                    menuItem.Header = "Open URL";
+                    menuItem.Header = "Copy To Clipboard";
                     menuItem.Click += this.MyEventHandlers.MenuItem_Click;
                     item.ContextMenu.Items.Add(menuItem);
                 }
@@ -162,14 +162,17 @@ namespace Do_MyWork
         private void AddFileMenu(TreeViewItem item)
         {
             item.ContextMenu = new ContextMenu();
-            MenuItem menuItem = new MenuItem();
-            menuItem.Header = "Copy To Clipboard";
-            menuItem.Click += this.MyEventHandlers.MenuItem_Click;
-            item.ContextMenu.Items.Add(menuItem);
-            menuItem = new MenuItem();
-            menuItem.Header = "Edit";
-            menuItem.Click += this.MyEventHandlers.MenuItem_Click;
-            item.ContextMenu.Items.Add(menuItem);
+            TreeNode node = item.Tag as TreeNode;
+            MenuItem menuItem = null;
+
+            if (!exePattern.IsMatch(node.Path))
+            {
+                menuItem = new MenuItem();
+                menuItem.Header = "Edit";
+                menuItem.Click += this.MyEventHandlers.MenuItem_Click;
+                item.ContextMenu.Items.Add(menuItem);
+            }
+
             menuItem = new MenuItem();
             menuItem.Header = "Open Folder";
             menuItem.Click += this.MyEventHandlers.MenuItem_Click;
@@ -182,7 +185,10 @@ namespace Do_MyWork
             menuItem.Header = "Open PowerShell";
             menuItem.Click += this.MyEventHandlers.MenuItem_Click;
             item.ContextMenu.Items.Add(menuItem);
-            TreeNode node = item.Tag as TreeNode;
+            menuItem = new MenuItem();
+            menuItem.Header = "Copy To Clipboard";
+            menuItem.Click += this.MyEventHandlers.MenuItem_Click;
+            item.ContextMenu.Items.Add(menuItem);
 
             if (exePattern.IsMatch(node.Path))
             {
@@ -214,10 +220,6 @@ namespace Do_MyWork
         {
             item.ContextMenu = new ContextMenu();
             MenuItem menuItem = new MenuItem();
-            menuItem.Header = "Copy To Clipboard";
-            menuItem.Click += this.MyEventHandlers.MenuItem_Click;
-            item.ContextMenu.Items.Add(menuItem);
-            menuItem = new MenuItem();
             menuItem.Header = "Open Folder";
             menuItem.Click += this.MyEventHandlers.MenuItem_Click;
             item.ContextMenu.Items.Add(menuItem);
@@ -227,6 +229,10 @@ namespace Do_MyWork
             item.ContextMenu.Items.Add(menuItem);
             menuItem = new MenuItem();
             menuItem.Header = "Open PowerShell";
+            menuItem.Click += this.MyEventHandlers.MenuItem_Click;
+            item.ContextMenu.Items.Add(menuItem);
+            menuItem = new MenuItem();
+            menuItem.Header = "Copy To Clipboard";
             menuItem.Click += this.MyEventHandlers.MenuItem_Click;
             item.ContextMenu.Items.Add(menuItem);
         }
