@@ -1,6 +1,6 @@
 ﻿namespace Do_MyWork
 {
-    public enum TreeNodeType { FileParent, File, DirParent, Dir, Url }
+    public enum TreeNodeType { File, FileParent, ChildFile, DirParent, ChildDir, Url }
 
     class TreeNode
     {

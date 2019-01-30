@@ -108,13 +108,13 @@ namespace Do_MyWork
                     switch (treeNodeType)
                     {
                         case TreeNodeType.DirParent:
-                            item.Tag = new TreeNode(TreeNodeType.Dir, child, null);
+                            item.Tag = new TreeNode(TreeNodeType.ChildDir, child, null);
                             AddDirectoryMenu(item);
                             break;
 
                         case TreeNodeType.FileParent:
                         default:
-                            item.Tag = new TreeNode(TreeNodeType.File, child, null);
+                            item.Tag = new TreeNode(TreeNodeType.ChildFile, child, null);
                             AddFileMenu(item);
                             break;
                     }

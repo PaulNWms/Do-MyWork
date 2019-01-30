@@ -113,11 +113,12 @@ namespace Do_MyWork
             {
                 case TreeNodeType.FileParent:
                 case TreeNodeType.DirParent:
-                case TreeNodeType.Dir:
+                case TreeNodeType.ChildDir:
                 case TreeNodeType.Url:
                     return node.Path;
 
                 case TreeNodeType.File:
+                case TreeNodeType.ChildFile:
                 default:
                     return Path.GetDirectoryName(node.Path);
             }
