@@ -63,6 +63,10 @@ namespace Do_MyWork
                     item.Tag = new TreeNode(TreeNodeType.Url, xmlNode.Attributes["url"].Value, null);
                     item.ContextMenu = new ContextMenu();
                     MenuItem menuItem = new MenuItem();
+                    menuItem.Header = "Copy To Clipboard";
+                    menuItem.Click += this.MyEventHandlers.MenuItem_Click;
+                    item.ContextMenu.Items.Add(menuItem);
+                    menuItem = new MenuItem();
                     menuItem.Header = "Open URL";
                     menuItem.Click += this.MyEventHandlers.MenuItem_Click;
                     item.ContextMenu.Items.Add(menuItem);
@@ -159,6 +163,10 @@ namespace Do_MyWork
         {
             item.ContextMenu = new ContextMenu();
             MenuItem menuItem = new MenuItem();
+            menuItem.Header = "Copy To Clipboard";
+            menuItem.Click += this.MyEventHandlers.MenuItem_Click;
+            item.ContextMenu.Items.Add(menuItem);
+            menuItem = new MenuItem();
             menuItem.Header = "Edit";
             menuItem.Click += this.MyEventHandlers.MenuItem_Click;
             item.ContextMenu.Items.Add(menuItem);
@@ -206,6 +214,10 @@ namespace Do_MyWork
         {
             item.ContextMenu = new ContextMenu();
             MenuItem menuItem = new MenuItem();
+            menuItem.Header = "Copy To Clipboard";
+            menuItem.Click += this.MyEventHandlers.MenuItem_Click;
+            item.ContextMenu.Items.Add(menuItem);
+            menuItem = new MenuItem();
             menuItem.Header = "Open Folder";
             menuItem.Click += this.MyEventHandlers.MenuItem_Click;
             item.ContextMenu.Items.Add(menuItem);

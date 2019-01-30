@@ -31,6 +31,10 @@ namespace Do_MyWork
 
             switch (menuSelection)
             {
+                case "Copy To Clipboard":
+                    Clipboard.SetText(node.Path);
+                    break;
+
                 case "Edit":
                     Process.Start(this.Editor, node.Path);
                     break;
