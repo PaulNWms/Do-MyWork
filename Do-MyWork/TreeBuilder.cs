@@ -72,7 +72,7 @@ namespace Do_MyWork
                 {
                     if (TryGetPathFilter(xmlNode.Attributes["files"].Value, out path, out filter))
                     {
-                        item.Tag = new TreeNode(TreeNodeType.FileParent, path, filter);
+                        item.Tag = new TreeNode(TreeNodeType.FileParentDir, path, filter);
                         item.Expanded += this.MyEventHandlers.FilesItem_Expanded;
                         AddDirectoryMenu(item);
                         AddPlaceholder(item);
@@ -83,7 +83,7 @@ namespace Do_MyWork
                 {
                     if (TryGetPathFilter(xmlNode.Attributes["dirs"].Value, out path, out filter))
                     {
-                        item.Tag = new TreeNode(TreeNodeType.DirParent, path, filter);
+                        item.Tag = new TreeNode(TreeNodeType.DirParentDir, path, filter);
                         item.Expanded += this.MyEventHandlers.DirsItem_Expanded;
                         AddDirectoryMenu(item);
                         AddPlaceholder(item);
@@ -113,12 +113,12 @@ namespace Do_MyWork
 
                     switch (treeNodeType)
                     {
-                        case TreeNodeType.DirParent:
+                        case TreeNodeType.DirParentDir:
                             item.Tag = new TreeNode(TreeNodeType.ChildDir, child, null);
                             AddDirectoryMenu(item);
                             break;
 
-                        case TreeNodeType.FileParent:
+                        case TreeNodeType.FileParentDir:
                         default:
                             item.Tag = new TreeNode(TreeNodeType.ChildFile, child, null);
                             AddFileMenu(item);

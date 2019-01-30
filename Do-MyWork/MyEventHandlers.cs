@@ -111,9 +111,9 @@ namespace Do_MyWork
 
             switch (node.Type)
             {
-                case TreeNodeType.FileParent:
+                case TreeNodeType.FileParentDir:
                 case TreeNodeType.Dir:
-                case TreeNodeType.DirParent:
+                case TreeNodeType.DirParentDir:
                 case TreeNodeType.ChildDir:
                 case TreeNodeType.Url:
                     return node.Path;
@@ -128,12 +128,12 @@ namespace Do_MyWork
 
         public void FilesItem_Expanded(object sender, RoutedEventArgs e)
         {
-            FileSystemItem_Expanded(TreeNodeType.FileParent, sender, e);
+            FileSystemItem_Expanded(TreeNodeType.FileParentDir, sender, e);
         }
 
         public void DirsItem_Expanded(object sender, RoutedEventArgs e)
         {
-            FileSystemItem_Expanded(TreeNodeType.DirParent, sender, e);
+            FileSystemItem_Expanded(TreeNodeType.DirParentDir, sender, e);
         }
 
         public void FileSystemItem_Expanded(TreeNodeType treeNodeType, object sender, RoutedEventArgs e)
@@ -144,11 +144,11 @@ namespace Do_MyWork
 
             switch (treeNodeType)
             {
-                case TreeNodeType.DirParent:
+                case TreeNodeType.DirParentDir:
                     children = Directory.GetDirectories(node.Path, node.Filter);
                     break;
 
-                case TreeNodeType.FileParent:
+                case TreeNodeType.FileParentDir:
                 default:
                     children = Directory.GetFiles(node.Path, node.Filter);
                     break;
