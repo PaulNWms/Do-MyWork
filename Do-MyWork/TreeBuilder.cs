@@ -52,6 +52,12 @@ namespace Do_MyWork
                     AddFileMenu(item);
                 }
 
+                if (xmlNode.Attributes["dir"] != null)
+                {
+                    item.Tag = new TreeNode(TreeNodeType.Dir, xmlNode.Attributes["dir"].Value, null);
+                    AddDirectoryMenu(item);
+                }
+
                 if (xmlNode.Attributes["url"] != null)
                 {
                     item.Tag = new TreeNode(TreeNodeType.Url, xmlNode.Attributes["url"].Value, null);

@@ -112,6 +112,7 @@ namespace Do_MyWork
             switch (node.Type)
             {
                 case TreeNodeType.FileParent:
+                case TreeNodeType.Dir:
                 case TreeNodeType.DirParent:
                 case TreeNodeType.ChildDir:
                 case TreeNodeType.Url:
