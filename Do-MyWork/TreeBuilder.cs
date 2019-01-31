@@ -11,9 +11,9 @@ namespace Do_MyWork
     {
         public TreeView Tree { get; private set; }
         public MyEventHandlers MyEventHandlers { get; private set; }
-        private Regex exePattern = new Regex(@"\.exe$", RegexOptions.Singleline | RegexOptions.Compiled);
-        private Regex cmdPattern = new Regex(@"\.bat$|\.cmd$", RegexOptions.Singleline | RegexOptions.Compiled);
-        private Regex ps1Pattern = new Regex(@"\.ps1$", RegexOptions.Singleline | RegexOptions.Compiled);
+        public Regex exePattern = new Regex(@"\.exe$", RegexOptions.Singleline | RegexOptions.Compiled);
+        public Regex cmdPattern = new Regex(@"\.bat$|\.cmd$", RegexOptions.Singleline | RegexOptions.Compiled);
+        public Regex ps1Pattern = new Regex(@"\.ps1$", RegexOptions.Singleline | RegexOptions.Compiled);
 
         public TreeBuilder(MyEventHandlers myEventHandlers, TreeView tree)
         {
@@ -119,12 +119,16 @@ namespace Do_MyWork
                     {
                         case TreeNodeType.DirParentDir:
                             item.Tag = new TreeNode(TreeNodeType.ChildDir, child, null);
+                            item.Expanded += Item_Expanded;
+                            item.MouseDoubleClick += this.MyEventHandlers.Tree_MouseDoubleClick;
                             AddDirectoryMenu(item);
                             break;
 
                         case TreeNodeType.FileParentDir:
                         default:
                             item.Tag = new TreeNode(TreeNodeType.ChildFile, child, null);
+                            item.Expanded += Item_Expanded;
+                            item.MouseDoubleClick += this.MyEventHandlers.Tree_MouseDoubleClick;
                             AddFileMenu(item);
                             break;
                     }
@@ -132,6 +136,11 @@ namespace Do_MyWork
                     items.Add(item);
                 }
             }
+        }
+
+        private void Item_Expanded(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
         }
 
         private bool TryGetPathFilter(string pathFilter, out string path, out string filter)
@@ -190,27 +199,11 @@ namespace Do_MyWork
             menuItem.Click += this.MyEventHandlers.MenuItem_Click;
             item.ContextMenu.Items.Add(menuItem);
 
-            if (exePattern.IsMatch(node.Path))
+            if (exePattern.IsMatch(node.Path) || cmdPattern.IsMatch(node.Path) || ps1Pattern.IsMatch(node.Path))
             {
                 item.ContextMenu.Items.Add(new Separator());
                 menuItem = new MenuItem();
                 menuItem.Header = "Run Executable";
-                menuItem.Click += this.MyEventHandlers.MenuItem_Click;
-                item.ContextMenu.Items.Add(menuItem);
-            }
-            else if (cmdPattern.IsMatch(node.Path))
-            {
-                item.ContextMenu.Items.Add(new Separator());
-                menuItem = new MenuItem();
-                menuItem.Header = "Run Batch";
-                menuItem.Click += this.MyEventHandlers.MenuItem_Click;
-                item.ContextMenu.Items.Add(menuItem);
-            }
-            else if (ps1Pattern.IsMatch(node.Path))
-            {
-                item.ContextMenu.Items.Add(new Separator());
-                menuItem = new MenuItem();
-                menuItem.Header = "Run Script";
                 menuItem.Click += this.MyEventHandlers.MenuItem_Click;
                 item.ContextMenu.Items.Add(menuItem);
             }
