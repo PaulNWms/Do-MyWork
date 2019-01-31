@@ -87,24 +87,38 @@ namespace Do_MyWork
             TreeViewItem item = this.Tree.SelectedItem as TreeViewItem;
             TreeNode node = item.Tag as TreeNode;
 
-            switch (node.Type)
+            if (node != null)
             {
-                case TreeNodeType.File:
-                case TreeNodeType.ChildFile:
-                    RunFile(node);
-                    break;
+                switch (node.Type)
+                {
+                    case TreeNodeType.File:
+                    case TreeNodeType.ChildFile:
+                        RunFile(node);
+                        break;
 
-                case TreeNodeType.Url:
-                    Process.Start(node.Path);
-                    break;
+                    case TreeNodeType.Url:
+                        Process.Start(node.Path);
+                        break;
 
-                case TreeNodeType.Dir:
-                case TreeNodeType.ChildDir:
-                case TreeNodeType.FileParentDir:
-                case TreeNodeType.DirParentDir:
-                default:
-                    Process.Start("explorer.exe", GetFolder(node));
-                    break;
+                    case TreeNodeType.Dir:
+                    case TreeNodeType.ChildDir:
+                    case TreeNodeType.FileParentDir:
+                    case TreeNodeType.DirParentDir:
+                    default:
+                        {
+                            string folder = GetFolder(node);
+
+                            if (Directory.Exists(folder))
+                            {
+                                Process.Start("explorer.exe", folder);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Path does not exist: " + folder, "Got configuration problems?", MessageBoxButton.OK, MessageBoxImage.Hand);
+                            }
+                        }
+                        break;
+                }
             }
         }
 
@@ -180,24 +194,31 @@ namespace Do_MyWork
 
         public void FileSystemItem_Expanded(TreeNodeType treeNodeType, object sender, RoutedEventArgs e)
         {
-            TreeViewItem item = sender as TreeViewItem;
-            TreeNode node = item.Tag as TreeNode;
-            string[] children = null;
-
-            switch (treeNodeType)
+            try
             {
-                case TreeNodeType.DirParentDir:
-                    children = Directory.GetDirectories(node.Path, node.Filter);
-                    break;
+                TreeViewItem item = sender as TreeViewItem;
+                TreeNode node = item.Tag as TreeNode;
+                string[] children = null;
 
-                case TreeNodeType.FileParentDir:
-                default:
-                    children = Directory.GetFiles(node.Path, node.Filter);
-                    break;
+                switch (treeNodeType)
+                {
+                    case TreeNodeType.DirParentDir:
+                        children = Directory.GetDirectories(node.Path, node.Filter);
+                        break;
+
+                    case TreeNodeType.FileParentDir:
+                    default:
+                        children = Directory.GetFiles(node.Path, node.Filter);
+                        break;
+                }
+
+                item.Items.Clear();
+                this.TreeBuilder.AddChildNodes(treeNodeType, item.Items, children);
             }
-
-            item.Items.Clear();
-            this.TreeBuilder.AddChildNodes(treeNodeType, item.Items, children);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "No!", MessageBoxButton.OK, MessageBoxImage.Hand);
+            }
         }
 
         private void TreeView_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
