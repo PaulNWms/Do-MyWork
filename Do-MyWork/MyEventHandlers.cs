@@ -36,7 +36,13 @@ namespace Do_MyWork
                     break;
 
                 case "Edit":
-                    Process.Start(this.Editor, node.Path);
+                    {
+                        ProcessStartInfo psi = new ProcessStartInfo();
+                        psi.FileName = this.Editor;
+                        psi.Arguments = Path.GetFileName(node.Path);
+                        psi.WorkingDirectory = Path.GetDirectoryName(node.Path);
+                        Process.Start(psi);
+                    }
                     break;
 
                 case "Open Folder":
