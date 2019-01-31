@@ -119,6 +119,8 @@ namespace Do_MyWork
                         }
                         break;
                 }
+
+                e.Handled = true;
             }
         }
 
