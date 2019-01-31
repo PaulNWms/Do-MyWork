@@ -120,7 +120,7 @@ namespace Do_MyWork
                         case TreeNodeType.DirParentDir:
                             item.Tag = new TreeNode(TreeNodeType.ChildDir, child, null);
                             item.Expanded += Item_Expanded;
-                            item.MouseDoubleClick += this.MyEventHandlers.Tree_MouseDoubleClick;
+                            //item.MouseDoubleClick += this.MyEventHandlers.Tree_MouseDoubleClick2;
                             AddDirectoryMenu(item);
                             break;
 
@@ -128,7 +128,7 @@ namespace Do_MyWork
                         default:
                             item.Tag = new TreeNode(TreeNodeType.ChildFile, child, null);
                             item.Expanded += Item_Expanded;
-                            item.MouseDoubleClick += this.MyEventHandlers.Tree_MouseDoubleClick;
+                            //item.MouseDoubleClick += this.MyEventHandlers.Tree_MouseDoubleClick2;
                             AddFileMenu(item);
                             break;
                     }
