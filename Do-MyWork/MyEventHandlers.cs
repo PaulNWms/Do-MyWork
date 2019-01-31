@@ -20,6 +20,7 @@ namespace Do_MyWork
             this.Editor = editor;
             this.Tree = tree;
             tree.PreviewMouseRightButtonDown += TreeView_PreviewMouseRightButtonDown;
+            tree.MouseDoubleClick += Tree_MouseDoubleClick;
         }
 
         public void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -40,7 +41,7 @@ namespace Do_MyWork
                     break;
 
                 case "Open Folder":
-                    Process.Start("explorer.exe", GetFolder(item));
+                    Process.Start("explorer.exe", GetFolder(node));
                     break;
 
                 case "Open CMD":
@@ -48,7 +49,7 @@ namespace Do_MyWork
                         ProcessStartInfo psi = new ProcessStartInfo();
                         psi.FileName = "cmd.exe";
                         psi.Arguments = "/K";
-                        psi.WorkingDirectory = GetFolder(item);
+                        psi.WorkingDirectory = GetFolder(node);
                         Process.Start(psi);
                     }
                     break;
@@ -58,7 +59,7 @@ namespace Do_MyWork
                         ProcessStartInfo psi = new ProcessStartInfo();
                         psi.FileName = "powershell.exe";
                         psi.Arguments = "-NoExit";
-                        psi.WorkingDirectory = GetFolder(item);
+                        psi.WorkingDirectory = GetFolder(node);
                         Process.Start(psi);
                     }
                     break;
@@ -68,51 +69,83 @@ namespace Do_MyWork
                     break;
 
                 case "Run Executable":
-                    {
-                        ProcessStartInfo psi = new ProcessStartInfo();
-                        psi.CreateNoWindow = false;
-                        psi.UseShellExecute = false;
-                        psi.WindowStyle = ProcessWindowStyle.Hidden;
-                        psi.FileName = Path.GetFileName(node.Path);
-                        psi.WorkingDirectory = Path.GetDirectoryName(node.Path);
-
-                        try
-                        {
-                            Process.Start(psi);
-                        }
-                        catch(Exception ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }
-                    }
-                    break;
-
                 case "Run Batch":
-                    {
-                        ProcessStartInfo psi = new ProcessStartInfo();
-                        psi.FileName = "cmd.exe";
-                        psi.Arguments = string.Format(@"/K ""{0}""", Path.GetFileName(node.Path));
-                        psi.WorkingDirectory = GetFolder(item);
-                        Process.Start(psi);
-                    }
-                    break;
-
                 case "Run Script":
-                    {
-                        ProcessStartInfo psi = new ProcessStartInfo();
-                        psi.FileName = "powershell.exe";
-                        psi.Arguments = string.Format(@"-NoExit -Command "".\{0}""", Path.GetFileName(node.Path));
-                        psi.WorkingDirectory = GetFolder(item);
-                        Process.Start(psi);
-                    }
+                    RunFile(node);
                     break;
             }
         }
 
-        private string GetFolder(TreeViewItem item)
+        public void Tree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            TreeViewItem item = this.Tree.SelectedItem as TreeViewItem;
             TreeNode node = item.Tag as TreeNode;
 
+            switch (node.Type)
+            {
+                case TreeNodeType.File:
+                case TreeNodeType.ChildFile:
+                    RunFile(node);
+                    break;
+
+                case TreeNodeType.Url:
+                    Process.Start(node.Path);
+                    break;
+
+                case TreeNodeType.Dir:
+                case TreeNodeType.ChildDir:
+                case TreeNodeType.FileParentDir:
+                case TreeNodeType.DirParentDir:
+                default:
+                    Process.Start("explorer.exe", GetFolder(node));
+                    break;
+            }
+        }
+
+        private void RunFile(TreeNode node)
+        {
+            if (this.TreeBuilder.exePattern.IsMatch(node.Path))
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.CreateNoWindow = false;
+                psi.UseShellExecute = false;
+                psi.WindowStyle = ProcessWindowStyle.Hidden;
+                psi.FileName = Path.GetFileName(node.Path);
+                psi.WorkingDirectory = Path.GetDirectoryName(node.Path);
+
+                try
+                {
+                    Process.Start(psi);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else if (this.TreeBuilder.cmdPattern.IsMatch(node.Path))
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = "cmd.exe";
+                psi.Arguments = string.Format(@"/K ""{0}""", Path.GetFileName(node.Path));
+                psi.WorkingDirectory = GetFolder(node);
+                Process.Start(psi);
+            }
+            else if (this.TreeBuilder.ps1Pattern.IsMatch(node.Path))
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = "powershell.exe";
+                psi.Arguments = string.Format(@"-NoExit -Command "".\{0}""", Path.GetFileName(node.Path));
+                psi.WorkingDirectory = GetFolder(node);
+                Process.Start(psi);
+            }
+            else
+            {
+                Process.Start(this.Editor, node.Path);
+            }
+        }
+
+        private string GetFolder(TreeNode node)
+        {
             switch (node.Type)
             {
                 case TreeNodeType.FileParentDir:
@@ -127,7 +160,6 @@ namespace Do_MyWork
                 default:
                     return Path.GetDirectoryName(node.Path);
             }
-
         }
 
         public void FilesItem_Expanded(object sender, RoutedEventArgs e)
