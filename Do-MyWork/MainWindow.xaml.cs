@@ -52,8 +52,9 @@ namespace Do_MyWork
                     LoadAppSettings();
                     break;
                 }
-                catch (ConfigurationErrorsException ex)
+                catch (ConfigurationErrorsException)
                 {
+                    // Spin wait until FileSystemWatcher releases file
                     Thread.Sleep(100);
                 }
             }

@@ -37,13 +37,7 @@ namespace Do_MyWork
                     break;
 
                 case "Edit":
-                    {
-                        ProcessStartInfo psi = new ProcessStartInfo();
-                        psi.FileName = this.Editor;
-                        psi.Arguments = Path.GetFileName(node.Path);
-                        psi.WorkingDirectory = Path.GetDirectoryName(node.Path);
-                        Process.Start(psi);
-                    }
+                    EditFile(node);
                     break;
 
                 case "Open Folder":
@@ -51,23 +45,11 @@ namespace Do_MyWork
                     break;
 
                 case "Open CMD":
-                    {
-                        ProcessStartInfo psi = new ProcessStartInfo();
-                        psi.FileName = "cmd.exe";
-                        psi.Arguments = "/K";
-                        psi.WorkingDirectory = GetFolder(node);
-                        Process.Start(psi);
-                    }
+                    OpenCmd(node);
                     break;
 
                 case "Open PowerShell":
-                    {
-                        ProcessStartInfo psi = new ProcessStartInfo();
-                        psi.FileName = "powershell.exe";
-                        psi.Arguments = "-NoExit";
-                        psi.WorkingDirectory = GetFolder(node);
-                        Process.Start(psi);
-                    }
+                    OpenPs1(node);
                     break;
 
                 case "Open URL":
@@ -128,37 +110,15 @@ namespace Do_MyWork
         {
             if (this.TreeBuilder.exePattern.IsMatch(node.Path))
             {
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.CreateNoWindow = false;
-                psi.UseShellExecute = false;
-                psi.WindowStyle = ProcessWindowStyle.Hidden;
-                psi.FileName = Path.GetFileName(node.Path);
-                psi.WorkingDirectory = Path.GetDirectoryName(node.Path);
-
-                try
-                {
-                    Process.Start(psi);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                RunExe(node);
             }
             else if (this.TreeBuilder.cmdPattern.IsMatch(node.Path))
             {
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = "cmd.exe";
-                psi.Arguments = string.Format(@"/K ""{0}""", Path.GetFileName(node.Path));
-                psi.WorkingDirectory = GetFolder(node);
-                Process.Start(psi);
+                RunCmd(node);
             }
             else if (this.TreeBuilder.ps1Pattern.IsMatch(node.Path))
             {
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = "powershell.exe";
-                psi.Arguments = string.Format(@"-NoExit -Command "".\{0}""", Path.GetFileName(node.Path));
-                psi.WorkingDirectory = GetFolder(node);
-                Process.Start(psi);
+                RunPs1(node);
             }
             else
             {
@@ -259,5 +219,73 @@ namespace Do_MyWork
 
             return returnVal as T;
         }
+
+        private void RunExe(TreeNode node)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.CreateNoWindow = false;
+            psi.UseShellExecute = false;
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
+            psi.FileName = Path.GetFileName(node.Path);
+            psi.WorkingDirectory = Path.GetDirectoryName(node.Path);
+
+            try
+            {
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        #region Launch commands
+
+        private void RunCmd(TreeNode node)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = "cmd.exe";
+            psi.Arguments = string.Format(@"/K ""{0}""", Path.GetFileName(node.Path));
+            psi.WorkingDirectory = GetFolder(node);
+            Process.Start(psi);
+        }
+
+        private void RunPs1(TreeNode node)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = "powershell.exe";
+            psi.Arguments = string.Format(@"-NoExit -Command "".\{0}""", Path.GetFileName(node.Path));
+            psi.WorkingDirectory = GetFolder(node);
+            Process.Start(psi);
+        }
+
+        private void EditFile(TreeNode node)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = this.Editor;
+            psi.Arguments = Path.GetFileName(node.Path);
+            psi.WorkingDirectory = Path.GetDirectoryName(node.Path);
+            Process.Start(psi);
+        }
+
+        private void OpenCmd(TreeNode node)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = "cmd.exe";
+            psi.Arguments = "/K";
+            psi.WorkingDirectory = GetFolder(node);
+            Process.Start(psi);
+        }
+
+        private void OpenPs1(TreeNode node)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = "powershell.exe";
+            psi.Arguments = "-NoExit";
+            psi.WorkingDirectory = GetFolder(node);
+            Process.Start(psi);
+        }
+
+        #endregion
     }
 }
