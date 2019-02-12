@@ -67,42 +67,46 @@ namespace Do_MyWork
         public void Tree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TreeViewItem item = this.Tree.SelectedItem as TreeViewItem;
-            TreeNode node = item.Tag as TreeNode;
 
-            if (node != null)
+            if (item != null && item.Tag != null)
             {
-                switch (node.Type)
+                TreeNode node = item.Tag as TreeNode;
+
+                if (node != null)
                 {
-                    case TreeNodeType.File:
-                    case TreeNodeType.ChildFile:
-                        RunFile(node);
-                        break;
+                    switch (node.Type)
+                    {
+                        case TreeNodeType.File:
+                        case TreeNodeType.ChildFile:
+                            RunFile(node);
+                            break;
 
-                    case TreeNodeType.Url:
-                        Process.Start(node.Path);
-                        break;
+                        case TreeNodeType.Url:
+                            Process.Start(node.Path);
+                            break;
 
-                    case TreeNodeType.Dir:
-                    case TreeNodeType.ChildDir:
-                    case TreeNodeType.FileParentDir:
-                    case TreeNodeType.DirParentDir:
-                    default:
-                        {
-                            string folder = GetFolder(node);
-
-                            if (Directory.Exists(folder))
+                        case TreeNodeType.Dir:
+                        case TreeNodeType.ChildDir:
+                        case TreeNodeType.FileParentDir:
+                        case TreeNodeType.DirParentDir:
+                        default:
                             {
-                                Process.Start("explorer.exe", folder);
+                                string folder = GetFolder(node);
+
+                                if (Directory.Exists(folder))
+                                {
+                                    Process.Start("explorer.exe", folder);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Path does not exist: " + folder, "Got configuration problems?", MessageBoxButton.OK, MessageBoxImage.Hand);
+                                }
                             }
-                            else
-                            {
-                                MessageBox.Show("Path does not exist: " + folder, "Got configuration problems?", MessageBoxButton.OK, MessageBoxImage.Hand);
-                            }
-                        }
-                        break;
+                            break;
+                    }
+
+                    e.Handled = true;
                 }
-
-                e.Handled = true;
             }
         }
 

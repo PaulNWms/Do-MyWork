@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
+using System;
 
 namespace Do_MyWork
 {
@@ -109,31 +111,43 @@ namespace Do_MyWork
             }
             else
             {
-                foreach (string child in children)
+                Cursor prevCursor = this.Tree.Cursor;
+                try
                 {
-                    TreeViewItem item = new TreeViewItem();
-                    item.Header = Path.GetFileName(child);
-                    item.Tag = child;
+                    this.Tree.Cursor = Cursors.Wait;
 
-                    switch (treeNodeType)
+                    foreach (string child in children)
                     {
-                        case TreeNodeType.DirParentDir:
-                            item.Tag = new TreeNode(TreeNodeType.ChildDir, child, null);
-                            item.Expanded += Item_Expanded;
-                            //item.MouseDoubleClick += this.MyEventHandlers.Tree_MouseDoubleClick2;
-                            AddDirectoryMenu(item);
-                            break;
+                        TreeViewItem item = new TreeViewItem();
+                        item.Header = Path.GetFileName(child);
+                        item.Tag = child;
 
-                        case TreeNodeType.FileParentDir:
-                        default:
-                            item.Tag = new TreeNode(TreeNodeType.ChildFile, child, null);
-                            item.Expanded += Item_Expanded;
-                            //item.MouseDoubleClick += this.MyEventHandlers.Tree_MouseDoubleClick2;
-                            AddFileMenu(item);
-                            break;
+                        switch (treeNodeType)
+                        {
+                            case TreeNodeType.DirParentDir:
+                                item.Tag = new TreeNode(TreeNodeType.ChildDir, child, null);
+                                item.Expanded += Item_Expanded;
+                                AddDirectoryMenu(item);
+                                break;
+
+                            case TreeNodeType.FileParentDir:
+                            default:
+                                item.Tag = new TreeNode(TreeNodeType.ChildFile, child, null);
+                                item.Expanded += Item_Expanded;
+                                AddFileMenu(item);
+                                break;
+                        }
+
+                        items.Add(item);
                     }
-
-                    items.Add(item);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    this.Tree.Cursor = prevCursor;
                 }
             }
         }
