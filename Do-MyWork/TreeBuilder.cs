@@ -43,6 +43,9 @@ namespace Do_MyWork
         {
             foreach (XmlNode xmlNode in parentXmlNode.ChildNodes)
             {
+                if (xmlNode.NodeType != XmlNodeType.Element)
+                    continue;
+
                 TreeViewItem item = new TreeViewItem();
                 item.Header = xmlNode.Attributes["name"].Value;
                 string path = null;
