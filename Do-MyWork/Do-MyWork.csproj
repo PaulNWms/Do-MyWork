@@ -35,7 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Puppy.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -104,13 +105,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Puppy.png" />
+    <Resource Include="Puppy256.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Puppy.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Puppy.ico" />
+    <Resource Include="Resources\Puppy256.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

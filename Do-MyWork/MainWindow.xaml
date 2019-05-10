@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Do_MyWork"
         mc:Ignorable="d"
-        Title="Do-MyWork" Height="500" Width="500" Icon="Resources\Puppy.png">
+        Title="Do-MyWork" Height="500" Width="500" Icon="Resources\Puppy256.ico">
     <Window.Background>
         <SolidColorBrush Color="#FF471919"/>
     </Window.Background>
